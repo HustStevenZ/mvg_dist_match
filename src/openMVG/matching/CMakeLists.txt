@@ -1,6 +1,7 @@
 
 project(matching)
 
+#PROTOBUF_GENERATE_CPP
 file(
 	GLOB
 	matching_files_header

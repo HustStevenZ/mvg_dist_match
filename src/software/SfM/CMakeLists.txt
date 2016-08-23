@@ -58,6 +58,21 @@ INSTALL(TARGETS openMVG_main_ComputeFeatures DESTINATION bin/)
 SET_PROPERTY(TARGET openMVG_main_ComputeMatches PROPERTY FOLDER OpenMVG/software)
 INSTALL(TARGETS openMVG_main_ComputeMatches DESTINATION bin/)
 
+
+ADD_EXECUTABLE(openMVG_dist_ComputeMatches openMVG_dist_ComputeMatches.cpp)
+TARGET_LINK_LIBRARIES(openMVG_dist_ComputeMatches
+        openMVG_system
+        openMVG_features
+        openMVG_multiview
+        openMVG_sfm
+        openMVG_matching_image_collection
+        stlplus
+        zmqpp
+        zmq
+        )
+
+SET_PROPERTY(TARGET openMVG_dist_ComputeMatches PROPERTY FOLDER OpenMVG/software)
+INSTALL(TARGETS openMVG_dist_ComputeMatches DESTINATION bin/)
 ###
 # SfM Pipelines
 # - Incremental/Sequential

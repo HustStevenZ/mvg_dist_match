@@ -83,6 +83,11 @@ if(NOT EXISTS ${PROJECT_SOURCE_DIR}/dependencies/cereal/include)
     "  > git submodule update -i\n")
 endif()
 
+
+#find_package(ProtoBuf REQUIRED)
+#INCLUDE_DIRECTORIES(${PROTOBUF_INCLUDE_DIRS})
+#LINK_LIBRARIES(${PROTOBUF_LIBRARIES})
+
 # ==============================================================================
 # Additional cmake find modules
 # ==============================================================================
@@ -167,6 +172,19 @@ ENDIF (NOT APPLE)
 
 # Folders
 SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
+#
+find_package(libzmq REQUIRED)
+if(PC_LIBZMQ_FOUND)
+include_directories(${LIBZMQ_INCLUDE_DIRS})
+link_libraries(${LIBZMQ_LIBRARIES})
+endif()
+
+find_package(zmqpp REQUIRED)
+if(ZMQPP_FOUND)
+  include_directories(${ZMQPP_INCLUDE_DIRS})
+  link_libraries(${ZMQPP_LIBRARIES})
+  message("zmqpp libraries" ${ZMQPP_LIBRARIES})
+endif()
 
 # ==============================================================================
 # SUBMODULE CONFIGURATION
@@ -337,6 +355,14 @@ IF (OpenMVG_USE_INTERNAL_OSI AND OpenMVG_USE_INTERNAL_CLP AND OpenMVG_USE_INTERN
   SET_PROPERTY(TARGET lib_Osi PROPERTY FOLDER OpenMVG/3rdParty/lib_Osi)
   SET_PROPERTY(TARGET lib_OsiClpSolver PROPERTY FOLDER OpenMVG/3rdParty/lib_OsiClpSolver)
 ENDIF()
+# ==============================================================================
+# Internal cpp_redis
+# ==============================================================================
+SET(CPP_REDIS_LIBRARY cpp_redis)
+ADD_SUBDIRECTORY(dependencies/cpp_redis)
+SET_PROPERTY(TARGET cpp_redis PROPERTY FOLDER OpenMVG/3rdParty/libcpp_redis)
+INCLUDE_DIRECTORIES(dependencies/cpp_redis/includes)
+#link_libraries(${CPP_REDIS_LIBRARY})
 
 # ==============================================================================
 # Lemon
@@ -377,6 +403,7 @@ IF(OpenMVG_USE_OPENCV)
   ENDIF(NOT OpenCV_FOUND)
 ENDIF(OpenMVG_USE_OPENCV)
 
+#FIND_PACKAGE(cereal REQUIRED)
 
 # ==============================================================================
 # Third-party libraries:

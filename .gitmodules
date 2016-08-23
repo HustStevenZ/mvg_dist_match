@@ -7,3 +7,15 @@
 [submodule "src/dependencies/cereal"]
 	path = src/dependencies/cereal
 	url = https://github.com/openMVG-thirdparty/cereal.git
+[submodule "libzmq"]
+	path = src/dependencies/libzmq
+	url = https://github.com/zeromq/libzmq.git
+	branch = master
+[submodule "zmqpp"]
+	path = src/dependencies/zmqpp
+	url = https://github.com/zeromq/zmqpp.git
+	branch = master
+[submodule "src/dependencies/cpp_redis"]
+	path = src/dependencies/cpp_redis
+	url = https://github.com/Cylix/cpp_redis.git
+	branch = master

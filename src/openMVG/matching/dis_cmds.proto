@@ -1,0 +1,25 @@
+package openMVG.matching;
+
+message DisStartCommand{
+required string command = "start";
+message Pair{
+required int first,
+required int second
+}
+repeated Pair tasks;
+}
+
+
+message DisFinishCommand{
+required string command = "finish";
+required string workerId = "127.0.0.1";
+message IndPair{
+required int first,
+required int second
+}
+message IndPair_Vec{
+repeated Pair pair;
+}
+
+required map<IndPair,IndPair_Vec> matches;
+}

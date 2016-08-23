@@ -52,6 +52,7 @@ enum EPairMode
   PAIR_FROM_FILE  = 2
 };
 
+
 /// Compute corresponding features between a series of views:
 /// - Load view images description (regions: features & descriptors)
 /// - Compute putative local feature matches (descriptors matching)

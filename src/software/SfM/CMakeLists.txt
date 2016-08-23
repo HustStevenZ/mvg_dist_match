@@ -69,6 +69,7 @@ TARGET_LINK_LIBRARIES(openMVG_dist_ComputeMatches
         stlplus
         zmqpp
         zmq
+        cpp_redis
         )
 
 SET_PROPERTY(TARGET openMVG_dist_ComputeMatches PROPERTY FOLDER OpenMVG/software)

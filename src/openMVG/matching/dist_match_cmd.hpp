@@ -17,8 +17,15 @@ namespace openMVG {
             Command()= default;
 
             virtual ~Command()= default;
+            template <class Archive>
+            void  serialize( Archive & ar )
+            {
+                ar(cereal::make_nvp("commmand",command));
+//                ar(command);
+            }
         public:
             string command;
+
         };
 
         class FinishTaskCommand:public Command
@@ -47,6 +54,16 @@ namespace openMVG {
         public:
             std::string workerId;
             PairWiseMatches matches;
+        };
+
+        class SyncRegionCommand: public Command
+        {
+        public:
+            SyncRegionCommand()
+            {
+                command="sync";
+            }
+
         };
 
         class StartTaskCommand:public Command
@@ -95,6 +112,9 @@ namespace openMVG {
 CEREAL_REGISTER_TYPE_WITH_NAME(openMVG::matching::FinishTaskCommand, "FinishTaskCommand");
 
 CEREAL_REGISTER_TYPE_WITH_NAME(openMVG::matching::StartTaskCommand, "StartTaskCommand");
+
+
+CEREAL_REGISTER_TYPE_WITH_NAME(openMVG::matching::SyncRegionCommand, "SyncRegionCommand");
 
 
 #endif //OPENMVG_DIST_MATCH_CMD_HPP

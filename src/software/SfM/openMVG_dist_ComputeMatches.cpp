@@ -867,6 +867,7 @@ int main(int argc, char **argv)
                         }
                     }
 
+                    recvThread.join();
                     for(std::pair<std::string,std::string> kv: global_workerMap)
                     {
                         //Send empty strat cmds to ask clients to quit
@@ -889,7 +890,6 @@ int main(int argc, char **argv)
 
                     }
 
-                    recvThread.join();
 //                    recvsocket->unbind(bindUrl.str());
                     delete recvsocket;
 

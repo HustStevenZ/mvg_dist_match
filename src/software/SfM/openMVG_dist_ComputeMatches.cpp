@@ -110,7 +110,7 @@ zmqpp::socket* sendsocket;
 zmqpp::socket* recvsocket;
 
 zmqpp::poller* poller;
-zmqpp::reactor* reactor;
+//zmqpp::reactor* reactor;
 
 void initWorker(ServerConfig & serverConfig)
 {

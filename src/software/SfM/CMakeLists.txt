@@ -40,6 +40,7 @@ TARGET_LINK_LIBRARIES(openMVG_main_ComputeFeatures
   openMVG_sfm
   stlplus
   vlsift
+  SiftGPU
   )
 
 ADD_EXECUTABLE(openMVG_main_ComputeMatches main_ComputeMatches.cpp)

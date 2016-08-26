@@ -45,6 +45,7 @@ class Image : public Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Eigen::Row
     /// Full internal type
     typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> Base;
 
+    std::string imageFilePath = "";
 
     /**
      * @brief Default constructor

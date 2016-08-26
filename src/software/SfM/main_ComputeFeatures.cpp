@@ -12,6 +12,7 @@
 /// Feature/Regions & Image describer interfaces
 #include "openMVG/features/features.hpp"
 #include "nonFree/sift/SIFT_describer.hpp"
+#include "nonFree/SiftGPU/SIFTGPU_describer.hpp"
 #include <cereal/archives/json.hpp>
 #include "openMVG/system/timer.hpp"
 
@@ -60,6 +61,7 @@ int main(int argc, char **argv)
   std::string sImage_Describer_Method = "SIFT";
   bool bForce = false;
   std::string sFeaturePreset = "";
+  std::string sSiftGPUEngine = "";
 #ifdef OPENMVG_USE_OPENMP
   int iNumThreads = 0;
 #endif
@@ -72,6 +74,7 @@ int main(int argc, char **argv)
   cmd.add( make_option('u', bUpRight, "upright") );
   cmd.add( make_option('f', bForce, "force") );
   cmd.add( make_option('p', sFeaturePreset, "describerPreset") );
+  cmd.add( make_option('e', sSiftGPUEngine,"sifEngine"));
 
 #ifdef OPENMVG_USE_OPENMP
   cmd.add( make_option('n', iNumThreads, "numThreads") );
@@ -92,11 +95,16 @@ int main(int argc, char **argv)
       << "   AKAZE_FLOAT: AKAZE with floating point descriptors,\n"
       << "   AKAZE_MLDB:  AKAZE with binary descriptors\n"
       << "[-u|--upright] Use Upright feature 0 or 1\n"
-      << "[-p|--describerPreset]\n"
+      << "[-p|--describerPreset]]\n"
       << "  (used to control the Image_describer configuration):\n"
       << "   NORMAL (default),\n"
       << "   HIGH,\n"
       << "   ULTRA: !!Can take long time!!\n"
+      << "[-e|--sifEngine]\n"
+      << " used to control the engine of siftgpu, use glsl by default\n"
+      << " glsl (default)\n"
+      << " cuda \n"
+      << " cl (not available yet)\n"
 #ifdef OPENMVG_USE_OPENMP
       << "[-n|--numThreads] number of parallel computations\n"
 #endif
@@ -114,6 +122,7 @@ int main(int argc, char **argv)
             << "--upright " << bUpRight << std::endl
             << "--describerPreset " << (sFeaturePreset.empty() ? "NORMAL" : sFeaturePreset) << std::endl
             << "--force " << bForce << std::endl
+            << "--siftEngine"<<sSiftGPUEngine<<std::endl
 #ifdef OPENMVG_USE_OPENMP
             << "--numThreads " << iNumThreads << std::endl
 #endif
@@ -190,6 +199,19 @@ int main(int argc, char **argv)
     {
       image_describer.reset(new AKAZE_Image_describer(AKAZEParams(AKAZEConfig(), AKAZE_MLDB), !bUpRight));
     }
+    else if(sImage_Describer_Method == "SIFTGPU")
+    {
+
+      SIFTGPU_ENGINE engine = SIFTGPU_ENGINE_GLSL;
+      if(sSiftGPUEngine == "cuda")
+      {
+        engine = SIFTGPU_ENGINE_CUDA;
+      } else if(sSiftGPUEngine == "cl")
+      {
+        engine = SIFTGPU_ENGINE_CL;
+      }
+      image_describer.reset(new SIFTGPU_Image_describer(!bUpRight,engine));
+    }
     //image_describer.reset(new AKAZE_Image_describer(AKAZEParams(AKAZEConfig(), AKAZE_LIOP), !bUpRight));
     if (!image_describer)
     {
@@ -234,8 +256,8 @@ int main(int argc, char **argv)
     if(stlplus::file_exists(sGlobalMask_filename))
       ReadImage(sGlobalMask_filename.c_str(), &globalMask);
 
-    C_Progress_display my_progress_bar( sfm_data.GetViews().size(),
-      std::cout, "\n- EXTRACT FEATURES -\n" );
+//    C_Progress_display my_progress_bar( sfm_data.GetViews().size(),
+//      std::cout, "\n- EXTRACT FEATURES -\n" );
 
     #ifdef OPENMVG_USE_OPENMP
     const unsigned int nb_max_thread = omp_get_max_threads();
@@ -284,6 +306,7 @@ int main(int argc, char **argv)
         if (ReadImage(sView_filename.c_str(), &imageGray))
         {
           // Compute features and descriptors and export them to files
+          imageGray.imageFilePath = sView_filename;
           std::unique_ptr<Regions> regions;
           image_describer->Describe(imageGray, regions, mask);
           image_describer->Save(regions.get(), sFeat, sDesc);
@@ -291,7 +314,7 @@ int main(int argc, char **argv)
 #ifdef OPENMVG_USE_OPENMP
         #pragma omp critical
 #endif
-        ++my_progress_bar;
+//        ++my_progress_bar;
       }
     }
     std::cout << "Task done in (s): " << timer.elapsed() << std::endl;

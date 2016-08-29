@@ -256,8 +256,8 @@ int main(int argc, char **argv)
     if(stlplus::file_exists(sGlobalMask_filename))
       ReadImage(sGlobalMask_filename.c_str(), &globalMask);
 
-//    C_Progress_display my_progress_bar( sfm_data.GetViews().size(),
-//      std::cout, "\n- EXTRACT FEATURES -\n" );
+    C_Progress_display my_progress_bar( sfm_data.GetViews().size(),
+      std::cout, "\n- EXTRACT FEATURES -\n" );
 
     #ifdef OPENMVG_USE_OPENMP
     const unsigned int nb_max_thread = omp_get_max_threads();
@@ -314,7 +314,7 @@ int main(int argc, char **argv)
 #ifdef OPENMVG_USE_OPENMP
         #pragma omp critical
 #endif
-//        ++my_progress_bar;
+        ++my_progress_bar;
       }
     }
     std::cout << "Task done in (s): " << timer.elapsed() << std::endl;

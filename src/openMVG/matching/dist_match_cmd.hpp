@@ -54,7 +54,7 @@ namespace openMVG {
         public:
             std::string workerId;
             PairWiseMatches matches;
-            string taskId;
+            std::string taskId;
         };
 
         class SyncRegionCommand: public Command
@@ -103,7 +103,7 @@ namespace openMVG {
 //            }
         public:
             Pair_Set tasks;
-            string taskId;
+            std::string taskId;
         };
     }
 }

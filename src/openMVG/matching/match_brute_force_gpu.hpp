@@ -88,13 +88,13 @@ class ArrayMatcher_Brute_Force_GPU : public ArrayMatcher<Scalar, Metric>
 //      initGL();
 
       _matcher.reset(new SiftMatchGPU());
-      _matcher->CreateContextGL();
 #ifdef __APPLE__
       _matcher->SetLanguage(SiftMatchGPU::SIFTMATCH_GLSL);
 #endif
 #ifdef __linux__
       _matcher->SetLanguage(SiftMatchGPU::SIFTMATCH_CUDA);
 #endif
+      _matcher->CreateContextGL();
 
       return true;
     }

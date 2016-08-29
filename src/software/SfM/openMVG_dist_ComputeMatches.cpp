@@ -188,6 +188,7 @@ void handleWaitForSync()
         }
         if(finishTaskCommand.matches.size()==0)
         {
+            std::cout<<"Worker "<<finishTaskCommand.workerId<<" has finished"<<std::endl;
             should_all_clients_synced++;
         }
     }
@@ -207,6 +208,7 @@ void handleServerRecvFinish()
             ar(finishTaskCommand);
         }
         std::cout<<"Server recved result form client "<<finishTaskCommand.workerId<<std::endl;
+        std::cout<<"\t task "<<finishTaskCommand.taskId<<"is done"<<std::endl;
         addFinished_Result(finishTaskCommand.matches);
         setWorkerIdle(finishTaskCommand.workerId);
     }
@@ -854,6 +856,9 @@ int main(int argc, char **argv)
                                 {
                                     pairSet.insert(pair_vec[i]);
                                 }
+                                std::stringstream taskIDss;
+                                taskIDss<<"Task"<<taskStart<<"-"<<taskEnd-1;
+                                startTask.taskId=taskIDss.str();
                                 //Send start matching
                                 //
                                 std::string commandJson;
@@ -868,6 +873,7 @@ int main(int argc, char **argv)
 
                                 setWorkerBusy(workerId);
                                 global_next_task = taskEnd;
+
                                 std::cout<<"Job "<<taskStart<<"-"<<taskEnd-1<<"have been dispatched to worker "<<workerId<<std::endl;
                             }
                         }
@@ -941,7 +947,8 @@ int main(int argc, char **argv)
                         FinishTaskCommand finishTaskCommand;
                         collectionMatcher->Match(sfm_data, regions_provider, startCmd.tasks, finishTaskCommand.matches);
 
-                        std::cout<<"Match done:\t there are "<<finishTaskCommand.matches.size()<<" match found"<<std::endl;
+                        finishTaskCommand.taskId = startCmd.taskId;
+                        std::cout<<"Match done:\t there are "<<finishTaskCommand.matches.size()<<" match found"<<"in task "<<finishTaskCommand.taskId<<std::endl;
                         finishTaskCommand.workerId = clientConfig.localIp;
 
                         std::string sendmessage;

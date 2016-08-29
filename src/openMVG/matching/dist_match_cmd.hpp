@@ -47,13 +47,14 @@ namespace openMVG {
             template <class Archive>
                     void serialize(Archive& ar)
             {
-                ar(cereal::make_nvp("command",command),cereal::make_nvp("workerId",workerId),cereal::make_nvp("matches",matches));
+                ar(cereal::make_nvp("command",command),cereal::make_nvp("workerId",workerId),cereal::make_nvp("matches",matches),cereal::make_nvp("taskId",taskId));
 //                ar(command);
             }
 
         public:
             std::string workerId;
             PairWiseMatches matches;
+            string taskId;
         };
 
         class SyncRegionCommand: public Command
@@ -86,22 +87,23 @@ namespace openMVG {
             template <class Archive>
             void  serialize( Archive & ar )
             {
-                ar(cereal::make_nvp("commmand",command),cereal::make_nvp("tasks",tasks));
+                ar(cereal::make_nvp("commmand",command),cereal::make_nvp("tasks",tasks),cereal::make_nvp("taskId",taskId));
 //                ar(command);
             }
 
-            template<typename Archive>
-            static void load_and_construct(
-                    Archive &ar,
-                    cereal::construct<StartTaskCommand> &construct) {
-                std::string command;
-                Pair_Set tasks;
-
-                ar(cereal::make_nvp("command",command), cereal::make_nvp("tasks",tasks));
-                construct(tasks);
-            }
+//            template<typename Archive>
+//            static void load_and_construct(
+//                    Archive &ar,
+//                    cereal::construct<StartTaskCommand> &construct) {
+//                std::string command;
+//                Pair_Set tasks;
+//
+//                ar(cereal::make_nvp("command",command), cereal::make_nvp("tasks",tasks));
+//                construct(tasks);
+//            }
         public:
             Pair_Set tasks;
+            string taskId;
         };
     }
 }

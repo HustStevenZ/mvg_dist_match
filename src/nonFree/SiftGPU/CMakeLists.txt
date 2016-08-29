@@ -153,6 +153,20 @@ else()
     add_library(SiftGPUStatic STATIC ${SOURCE_FILES} )
     add_library(SiftGPU SHARED ${SOURCE_FILES} )
 ENDIF()
+
+INSTALL(TARGETS SiftGPUStatic DESTINATION lib EXPORT openMVG-targets)
+SET_PROPERTY(TARGET SiftGPUStatic PROPERTY FOLDER OpenMVG/nonFree)
+INSTALL(TARGETS SiftGPU DESTINATION lib EXPORT openMVG-targets)
+SET_PROPERTY(TARGET SiftGPU PROPERTY FOLDER OpenMVG/nonFree)
+
+INSTALL(
+        DIRECTORY .
+        DESTINATION include/openMVG_dependencies/nonFree/SiftGPU
+        COMPONENT headers
+        FILES_MATCHING PATTERN "*.hpp" PATTERN "*.h"
+)
+
+
 #
 #set(TESTWINGLUT_SOURCE
 #        src/TestWin/BasicTestWin.cpp

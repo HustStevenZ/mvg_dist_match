@@ -51,6 +51,7 @@ TARGET_LINK_LIBRARIES(openMVG_main_ComputeMatches
   openMVG_sfm
   openMVG_matching_image_collection
   stlplus
+        SiftGPU
   )
 
 # Installation rules
@@ -71,6 +72,7 @@ TARGET_LINK_LIBRARIES(openMVG_dist_ComputeMatches
         zmqpp
         zmq
         cpp_redis
+        SiftGPU
         )
 
 SET_PROPERTY(TARGET openMVG_dist_ComputeMatches PROPERTY FOLDER OpenMVG/software)

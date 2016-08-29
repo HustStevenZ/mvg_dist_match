@@ -114,6 +114,7 @@ int main(int argc, char **argv)
       << "  For Scalar based regions descriptor:\n"
       << "    BRUTEFORCEL2: L2 BruteForce matching,\n"
       << "    ANNL2: L2 Approximate Nearest Neighbor matching,\n"
+      << "     BRUTEFORCEGPU: Bute Force Gpu matching\n"
       << "    CASCADEHASHINGL2: L2 Cascade Hashing matching.\n"
       << "    FASTCASCADEHASHINGL2: (default)\n"
       << "      L2 Cascade Hashing with precomputed hashed regions\n"
@@ -302,6 +303,12 @@ int main(int argc, char **argv)
     {
       std::cout << "Using ANN_L2 matcher" << std::endl;
       collectionMatcher.reset(new Matcher_Regions_AllInMemory(fDistRatio, ANN_L2));
+    }
+    else
+    if(sNearestMatchingMethod == "BRUTEFORCEGPU")
+    {
+      std::cout << "Using BRUTE_FORCE_GPU matcher" << std::endl;
+      collectionMatcher.reset(new Matcher_Regions_AllInMemory(fDistRatio, BRUTE_FORCE_GPU));
     }
     else
     if (sNearestMatchingMethod == "CASCADEHASHINGL2")

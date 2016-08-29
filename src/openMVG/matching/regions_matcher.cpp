@@ -9,6 +9,7 @@
 #include "openMVG/matching/matcher_brute_force.hpp"
 #include "openMVG/matching/matcher_kdtree_flann.hpp"
 #include "openMVG/matching/matcher_cascade_hashing.hpp"
+#include "openMVG/matching/match_brute_force_gpu.hpp"
 
 namespace openMVG {
 namespace matching {
@@ -93,6 +94,13 @@ Matcher_Regions_Database::Matcher_Regions_Database
           matching_interface_.reset(new matching::RegionsMatcherT<MatcherT>(database_regions, true));
         }
         break;
+        case  BRUTE_FORCE_GPU:
+        {
+
+          typedef L2_Vectorized<unsigned char> MetricT;
+          typedef ArrayMatcher_Brute_Force_GPU<unsigned char, MetricT> MatcherT;
+          matching_interface_.reset(new matching::RegionsMatcherT<MatcherT>(database_regions, true));
+        }break;
         default:
           std::cerr << "Using unknown matcher type" << std::endl;
       }
@@ -123,6 +131,13 @@ Matcher_Regions_Database::Matcher_Regions_Database
           matching_interface_.reset(new matching::RegionsMatcherT<MatcherT>(database_regions, true));
         }
         break;
+        case  BRUTE_FORCE_GPU:
+        {
+
+          typedef L2_Vectorized<float> MetricT;
+          typedef ArrayMatcher_Brute_Force_GPU<float, MetricT> MatcherT;
+          matching_interface_.reset(new matching::RegionsMatcherT<MatcherT>(database_regions, true));
+        }break;
         default:
           std::cerr << "Using unknown matcher type" << std::endl;
       }
@@ -151,6 +166,13 @@ Matcher_Regions_Database::Matcher_Regions_Database
           std::cerr << "Not yet implemented" << std::endl;
         }
         break;
+        case  BRUTE_FORCE_GPU:
+        {
+
+          typedef L2_Vectorized<double> MetricT;
+          typedef ArrayMatcher_Brute_Force_GPU<double, MetricT> MatcherT;
+          matching_interface_.reset(new matching::RegionsMatcherT<MatcherT>(database_regions, true));
+        }break;
         default:
           std::cerr << "Using unknown matcher type" << std::endl;
       }

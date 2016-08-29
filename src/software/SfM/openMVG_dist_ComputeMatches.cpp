@@ -92,11 +92,13 @@ std::mutex global_result_mutex;
 
 std::shared_ptr<Regions_Provider> regions_provider = std::make_shared<Regions_Provider>();
 std::unique_ptr<openMVG::features::Regions> regions_type(nullptr);
-
 cpp_redis::redis_client redisConnnector;
 
 volatile std::atomic_bool should_redis_replied(false);
 volatile std::atomic_int should_all_clients_synced(0);
+volatile std::atomic_bool should_all_task_dispatched(false);
+volatile std::atomic_int task_numbers_sent(0);
+volatile std::atomic_int task_numbers_recv(0);
 
 const int global_client_listen_port = 5678;
 const int global_client_send_port = 5679;
@@ -132,12 +134,15 @@ void addFinished_Result(const PairWiseMatches& results)
 
     global_result_mutex.lock();
 
+    std::cout<<"result map is locked"<<std::endl;
 //    for(auto& key: results.key_comp())
     for(auto& kv:results)
     {
         global_result_map.insert(kv);
     }
     global_result_mutex.unlock();
+
+    std::cout<<"result map is unlocked"<<std::endl;
 }
 
 bool isWorkerIdle(string workerId)
@@ -147,17 +152,27 @@ bool isWorkerIdle(string workerId)
 
 void setWorkerBusy(string workerId)
 {
+
+    std::cout<<"waiting for worker map"<<std::endl;
     global_worker_mutex.lock();
+
+    std::cout<<"worker map is aquired"<<std::endl;
     global_workerMap[workerId] = "busy";
     global_worker_mutex.unlock();
+
+    std::cout<<"worker map is unlocked"<<std::endl;
 }
 
 void setWorkerIdle(string workerId)
 {
 
+    std::cout<<"waiting for worker map"<<std::endl;
     global_worker_mutex.lock();
+
+    std::cout<<"worker map is aquired"<<std::endl;
     global_workerMap[workerId] = "idle";
     global_worker_mutex.unlock();
+    std::cout<<"worker map is unlocked"<<std::endl;
 }
 
 enum EGeometricModel
@@ -186,7 +201,7 @@ void handleWaitForSync()
             cereal::JSONInputArchive ar(i_archive_stream);
             ar(finishTaskCommand);
         }
-        if(finishTaskCommand.matches.size()==0)
+        if(finishTaskCommand.taskId.empty())
         {
             std::cout<<"Worker "<<finishTaskCommand.workerId<<" has finished"<<std::endl;
             should_all_clients_synced++;
@@ -196,7 +211,7 @@ void handleWaitForSync()
 
 void handleServerRecvFinish()
 {
-    while(global_result_map.size()<pair_vec.size())
+    while(!(should_all_task_dispatched && task_numbers_recv==task_numbers_sent))
     {
 
         string data;
@@ -211,6 +226,8 @@ void handleServerRecvFinish()
         std::cout<<"\t task "<<finishTaskCommand.taskId<<"is done"<<std::endl;
         addFinished_Result(finishTaskCommand.matches);
         setWorkerIdle(finishTaskCommand.workerId);
+        std::cout<<"\t now we have "<<global_result_map.size()<<" results in total"<<std::endl;
+        task_numbers_recv++;
     }
 
 }
@@ -871,14 +888,16 @@ int main(int argc, char **argv)
 
                                 global_worker_sockets[workerId]->send(commandJson);//No need to block
 
+                                task_numbers_sent++;
                                 setWorkerBusy(workerId);
                                 global_next_task = taskEnd;
 
                                 std::cout<<"Job "<<taskStart<<"-"<<taskEnd-1<<"have been dispatched to worker "<<workerId<<std::endl;
                             }
+
                         }
                     }
-
+                    should_all_task_dispatched = true;
                     recvThread.join();
                     for(std::pair<std::string,std::string> kv: global_workerMap)
                     {

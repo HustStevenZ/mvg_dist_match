@@ -607,6 +607,12 @@ int main(int argc, char **argv)
             collectionMatcher.reset(new Matcher_Regions_AllInMemory(fDistRatio, ANN_L2));
         }
         else
+        if(sNearestMatchingMethod == "BRUTEFORCEGPU")
+        {
+            std::cout << "Using BRUTE_FORCE_GPU matcher" << std::endl;
+            collectionMatcher.reset(new Matcher_Regions_AllInMemory(fDistRatio, BRUTE_FORCE_GPU));
+        }
+        else
         if (sNearestMatchingMethod == "CASCADEHASHINGL2")
         {
             std::cout << "Using CASCADE_HASHING_L2 matcher" << std::endl;
